@@ -65,10 +65,10 @@ def determine_interaction_type(left, right):
 
 def determine_gesture_type(left, right):
     # from the naming of the individual stimuli files determine which gesture type the output file will have
-    if left[28:32] != right[28:32]:
-        return '2G_DIFF'
-    elif left[28:32] == 'gg00':
+    if left[28:32] == 'gg00':
         return '1G'
+    elif left[28:32] != right[28:32]:
+        return '2G_DIFF'
     else:
         return '2G_SAME'
 
@@ -115,7 +115,7 @@ def main():
         # determine the interaction and gesture type of the dyad stimuli to be created
         interaction_type = determine_interaction_type(gestures[0],gestures[1])
         gesture_type = determine_gesture_type(gestures[0],gestures[1])
-
+        
         # load the video files of the individual stimuli to be combined into a dyad
         gesture_left = mpy.VideoFileClip(gestures[0],has_mask=True)
         gesture_right = mpy.VideoFileClip(gestures[1],has_mask=True).fx(mpy.vfx.mirror_x)

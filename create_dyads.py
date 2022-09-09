@@ -36,21 +36,19 @@ def create_gesture_combinations(pairings, files, is_1G=False):
     for ind, pair in enumerate(pairings):
         gestures_left = []
         gestures_right = []
-        if is_1G: # for the 1G condition only extract one gesture per side (the other side will be 'gg00' in each case)
-            regex_left = rf'({pair[0]})_(f01|p)'
-            regex_right = rf'({pair[1]})_(f02|n)'
-        else: # for 2G condition extract both gesture per side (to allow for SAME and DIFF combinations)
-            regex_left = rf'({pair[0]}|{pair[1]})_(f01|p)'
-            regex_right = rf'({pair[0]}|{pair[1]})_(f02|n)'
 
         # get the filenames for the gestures to be paired
         for f in files:
-            if search(regex_left, f):
+            if search(rf'({pair[0]}|{pair[1]})_(f01|p)', f):
                 gestures_left.append(f)
-            elif search(regex_right, f):
+            elif search(rf'({pair[0]}|{pair[1]})_(f02|n)', f):
                 gestures_right.append(f)
+
         # calculate all desired combinations for the respective pairing
-        pairings[ind] = [(left,right) for right in gestures_right for left in gestures_left]
+        if is_1G:
+            pairings[ind] = [(left,right) for right in gestures_right for left in gestures_left if left[28:32] != right[28:32]]
+        else:
+            pairings[ind] = [(left,right) for right in gestures_right for left in gestures_left]
 
     return pairings
 
@@ -115,7 +113,7 @@ def main():
         # determine the interaction and gesture type of the dyad stimuli to be created
         interaction_type = determine_interaction_type(gestures[0],gestures[1])
         gesture_type = determine_gesture_type(gestures[0],gestures[1])
-        
+
         # load the video files of the individual stimuli to be combined into a dyad
         gesture_left = mpy.VideoFileClip(gestures[0],has_mask=True)
         gesture_right = mpy.VideoFileClip(gestures[1],has_mask=True).fx(mpy.vfx.mirror_x)

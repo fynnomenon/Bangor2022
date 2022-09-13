@@ -88,7 +88,7 @@ def fix_rotation(clip):
     return clip
 
 def main():
-    in_dir = 'IndividualStimuli'
+    in_dir = 'IndividualStimuliCutted'
     file_names = listdir(in_dir)
     file_paths = [join(in_dir, f) for f in file_names]
 
@@ -117,7 +117,7 @@ def main():
         cleaned_clip.write_images_sequence(f'{img_seq_path}/frame%04d.png', fps=fps, withmask=True, verbose=False, logger=None) # create image sequence of cleaned video
 
         command = f'ffmpeg -i {img_seq_path}/frame%4d.png -framerate {fps} -pix_fmt yuva444p10le -vcodec prores_ks -threads 6 {out_dir}/{f_name}' # create transparent video out of image sequence
-        subprocess.call(command, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+        subprocess.call(command, shell=True)
 
 if __name__ == "__main__":
     main()

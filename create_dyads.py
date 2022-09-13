@@ -63,7 +63,7 @@ def determine_interaction_type(left, right):
 
 def determine_gesture_type(left, right):
     # from the naming of the individual stimuli files determine which gesture type the output file will have
-    if left[28:32] == 'gg00':
+    if 'gg00' in [left[28:32], right[28:32]]:
         return '1G'
     elif left[28:32] != right[28:32]:
         return '2G_DIFF'
@@ -90,12 +90,15 @@ def main():
                 mkdir(path_sub_sub_dir)
 
     # get all congruent 2G pairings
-    pairings_2G = [('gg09', 'gg19'), ('gg01', 'gg18'), ('gg10', 'gg11'), ('gg13', 'gg17'),
-                   ('gg08', 'gg20'), ('gg04', 'gg15'), ('gg02', 'gg06'), ('gg03', 'gg07'),]
+    #pairings_2G = [('gg09', 'gg19'), ('gg01', 'gg18'), ('gg10', 'gg11'), ('gg13', 'gg17'),
+    #               ('gg08', 'gg20'), ('gg04', 'gg15'), ('gg02', 'gg06'), ('gg03', 'gg07'),]
+
+    pairings_2G = [('gg04', 'gg11'), ('gg15', 'gg09'), ('gg18', 'gg01'), ('gg03', 'gg10'),
+    		    ('gg06', 'gg19'), ('gg08', 'gg20')]
 
     # get all 1G pairings
     all_gestures_df = pd.read_excel('GesturesIndividualStimuli.xlsx', 'gestures_combinations')
-    relevant_gestures_df = all_gestures_df.dropna()
+    relevant_gestures_df = all_gestures_df.dropna().drop([2,7,13,16])
     gesture_codes = relevant_gestures_df['GestureCode'].tolist()
 
     pairings_1G = []

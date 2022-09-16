@@ -5,11 +5,12 @@
 import moviepy.editor as mpy
 import subprocess
 import numpy as np
+import sys
 import cv2
 from tqdm.auto import tqdm
 from tqdm.contrib import tzip
 from os import mkdir, listdir
-from os.path import exists, join
+from os.path import join
 
 def remove_outliers(src):
     num_labels,labels,stats,centroids = cv2.connectedComponentsWithStats(src,connectivity=4,ltype=None)
@@ -88,19 +89,17 @@ def fix_rotation(clip):
     return clip
 
 def main():
-    in_dir = 'IndividualStimuliCutted'
+    # Read the command-line argument passed to the interpreter when invoking the script
+    mode = str(sys.argv[1])
+
     file_names = listdir(in_dir)
     file_paths = [join(in_dir, f) for f in file_names]
 
     out_dir = 'IndividualStimuliCleaned'
-    is_existend = exists(out_dir)
-    if not is_existend: # create the folder structure of the output directory
-        mkdir(out_dir)
+    mkdir(out_dir)
 
-    seq_dir = 'ImageSequences'
-    is_existend = exists(seq_dir)
-    if not is_existend: # create a folder for the image sequences
-        mkdir(seq_dir)
+    seq_dir = 'ImageSequences' + mode
+    mkdir(seq_dir)
 
     for f_name,f_path in tzip(file_names,file_paths):
         # load the video files of the individual stimuli to be cleaned

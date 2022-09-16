@@ -6,9 +6,10 @@ import moviepy.editor as mpy
 import numpy as np
 import pandas as pd
 import cv2
+import sys
 from tqdm.auto import tqdm
 from os import mkdir, listdir
-from os.path import exists, join
+from os.path import join
 from re import search
 from crop_and_resize import get_bbox_coords
 
@@ -32,32 +33,10 @@ def calculate_center(clip):
 
     return center
 
-def create_gesture_combinations(pairings, files, is_1G=False):
-    for ind, pair in enumerate(pairings):
-        gestures_left = []
-        gestures_right = []
-
-        # get the filenames for the gestures to be paired
-        for f in files:
-            if search(rf'({pair[0]}|{pair[1]})_(f01|p)', f):
-                gestures_left.append(f)
-            elif search(rf'({pair[0]}|{pair[1]})_(f02|n)', f):
-                gestures_right.append(f)
-
-        # calculate all desired combinations for the respective pairing
-        if is_1G:
-            pairings[ind] = [(left,right) for right in gestures_right for left in gestures_left if left[28:32] != right[28:32]]
-        else:
-            pairings[ind] = [(left,right) for right in gestures_right for left in gestures_left]
-
-    return pairings
-
 def determine_interaction_type(left, right):
     # from the naming of the individual stimuli files determine which interaction type the output file will have
     if len(left[33:-4]) != len(right[33:-4]):
         return 'HR'
-    elif len(left[33:-4]) == 1:
-        return 'RR'
     else:
         return 'HH'
 
@@ -70,35 +49,57 @@ def determine_gesture_type(left, right):
     else:
         return '2G_SAME'
 
+def create_gesture_combinations(pairings, files, interaction_type='HH'):
+    combs = []
+    for ind, pair in enumerate(pairings):
+        gestures_left = []
+        gestures_right = []
+
+        if interaction_type == 'HH':
+            regex = rf'({pair[0]}|{pair[1]})_(f01|f02)'
+        elif interaction_type == 'HR':
+            regex = rf'({pair[0]}|{pair[1]})_(f02|p)'
+
+        # get the filenames for the gestures to be paired
+        for f in files:
+            if search(regex, f):
+                gestures_left.append(f)
+                gestures_right.append(f)
+
+        # calculate all desired combinations for the respective pairing
+        temp_combs = [(left,right) for right in gestures_right for left in gestures_left if left[33:-4] != right[33:-4]]
+        correct_combs = [pair for pair in temp_combs if not(determine_gesture_type(pair[0],pair[1]) == '1G' and pair[0][28:32] == pair[1][28:32])]
+        combs.append(correct_combs)
+
+    return combs
+
 def main():
-    in_dir = 'IndividualStimuliCleaned'
+    # Read the command-line argument passed to the interpreter when invoking the script
+    mode = str(sys.argv[1])
+    in_dir = 'IndividualStimuli' + mode
+
+    # get a list of all files in the specified directory
     files = [join(in_dir, f) for f in listdir(in_dir)]
 
     root_dir = 'DyadStimuli'
     sub_dirs = ['1G', '2G_SAME', '2G_DIFF'] # Single-passive-gestures; Two-identical-gestures; Two-different-gestures (gesture types)
-    sub_sub_dirs = ['HH','HR','RR'] # Human-Human-Interaction; Human-Robot-Interaction; Robot-Robot-Interaction (interaction types)
+    sub_sub_dirs = ['HH','HR'] # Human-Human-Interaction; Human-Robot-Interaction;
 
     # create the folder structure of the output directory
-    is_existend = exists(root_dir)
-    if not is_existend:
-        mkdir(root_dir)
-        for sub_dir in sub_dirs:
-            path_sub_dir = join(root_dir,sub_dir)
-            mkdir(path_sub_dir)
-            for sub_sub_dir in sub_sub_dirs:
-                path_sub_sub_dir = join(root_dir,sub_dir,sub_sub_dir)
-                mkdir(path_sub_sub_dir)
+    mkdir(root_dir)
+    for sub_dir in sub_dirs:
+        path_sub_dir = join(root_dir,sub_dir)
+        mkdir(path_sub_dir)
+        for sub_sub_dir in sub_sub_dirs:
+            path_sub_sub_dir = join(root_dir,sub_dir,sub_sub_dir)
+            mkdir(path_sub_sub_dir)
 
-    # get all congruent 2G pairings
-    #pairings_2G = [('gg09', 'gg19'), ('gg01', 'gg18'), ('gg10', 'gg11'), ('gg13', 'gg17'),
-    #               ('gg08', 'gg20'), ('gg04', 'gg15'), ('gg02', 'gg06'), ('gg03', 'gg07'),]
-
-    pairings_2G = [('gg04', 'gg11'), ('gg15', 'gg09'), ('gg18', 'gg01'), ('gg03', 'gg10'),
-    		    ('gg06', 'gg19'), ('gg08', 'gg20')]
+    # get all 2G pairings
+    pairings_2G = [('gg04', 'gg11'), ('gg18', 'gg01'), ('gg06', 'gg19'), ('gg08', 'gg20')]
 
     # get all 1G pairings
     all_gestures_df = pd.read_excel('GesturesIndividualStimuli.xlsx', 'gestures_combinations')
-    relevant_gestures_df = all_gestures_df.dropna().drop([2,7,13,16])
+    relevant_gestures_df = all_gestures_df.dropna().drop([2,3,7,9,10,13,14,16])
     gesture_codes = relevant_gestures_df['GestureCode'].tolist()
 
     pairings_1G = []
@@ -106,10 +107,12 @@ def main():
         single_gesture = ('gg00', i)
         pairings_1G.append(single_gesture)
 
+    all_pairings = pairings_2G + pairings_1G
+
     # create all combinations for the 1G and 2G pairings
-    combinations_2G = create_gesture_combinations(pairings_2G, files)
-    combinations_1G = create_gesture_combinations(pairings_1G, files, True)
-    all_combinations = combinations_2G + combinations_1G
+    combinations_HH = create_gesture_combinations(all_pairings, files, 'HH')
+    combinations_HR = create_gesture_combinations(all_pairings, files, 'HR')
+    all_combinations = combinations_HH + combinations_HR
     all_combs_flat = [item for sublist in all_combinations for item in sublist]
 
     for gestures in tqdm(all_combs_flat):
@@ -125,7 +128,7 @@ def main():
         center_left = calculate_center(gesture_left)
         center_right = calculate_center(gesture_right)
 
-        # speed up or slow down video to 3sec
+        # speed up or slow down video to 2sec
         duration = 3
         gesture_right = change_dur(gesture_right,duration)
         gesture_left = change_dur(gesture_left,duration)

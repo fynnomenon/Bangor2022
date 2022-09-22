@@ -5,7 +5,6 @@
 import moviepy.editor as mpy
 import subprocess
 import numpy as np
-import sys
 import cv2
 from tqdm.auto import tqdm
 from tqdm.contrib import tzip
@@ -89,16 +88,15 @@ def fix_rotation(clip):
     return clip
 
 def main():
-    # Read the command-line argument passed to the interpreter when invoking the script
-    mode = str(sys.argv[1])
-
+    # get a list of all files in the input directory
+    in_dir = 'IndividualStimuliCutted'
     file_names = listdir(in_dir)
     file_paths = [join(in_dir, f) for f in file_names]
 
     out_dir = 'IndividualStimuliCleaned'
     mkdir(out_dir)
 
-    seq_dir = 'ImageSequences' + mode
+    seq_dir = 'ImageSequencesIndividuals'
     mkdir(seq_dir)
 
     for f_name,f_path in tzip(file_names,file_paths):
@@ -108,12 +106,14 @@ def main():
         temp_clip = fix_rotation(clip)
         # transform the individual stimuli files
         cleaned_clip = crop_and_resize(temp_clip)
+        # make the video grayscale
+        grayscale_clip = cleaned_clip.fx(mpy.vfx.blackwhite)
 
         # Workaround for the moviepy bug that write_videofile() cannot export a video clip with an alpha channel
         img_seq_path = join(seq_dir, f_name[:-4])
         mkdir(img_seq_path)
-        fps = cleaned_clip.fps
-        cleaned_clip.write_images_sequence(f'{img_seq_path}/frame%04d.png', fps=fps, withmask=True, verbose=False, logger=None) # create image sequence of cleaned video
+        fps = grayscale_clip.fps
+        grayscale_clip.write_images_sequence(f'{img_seq_path}/frame%04d.png', fps=fps, withmask=True, verbose=False, logger=None) # create image sequence of cleaned video
 
         command = f'ffmpeg -i {img_seq_path}/frame%4d.png -framerate {fps} -pix_fmt yuva444p10le -vcodec prores_ks -threads 6 {out_dir}/{f_name}' # create transparent video out of image sequence
         subprocess.call(command, shell=True)

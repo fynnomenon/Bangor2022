@@ -4,7 +4,6 @@
 # import the necessary packages
 import moviepy.editor as mpy
 import numpy as np
-import pandas as pd
 import cv2
 import shutil
 import random
@@ -98,23 +97,17 @@ def main():
     pairings_2G = [('gg04', 'gg11'), ('gg18', 'gg01'), ('gg06', 'gg19'), ('gg08', 'gg20')]
 
     # get all 1G pairings
-    all_gestures_df = pd.read_excel('GesturesIndividualStimuli.xlsx', 'gestures_combinations')
-    relevant_gestures_df = all_gestures_df.dropna().drop([2,3,7,9,10,13,14,16])
-    gesture_codes = relevant_gestures_df['GestureCode'].tolist()
+    pairings_1G = [('gg00','gg01'), ('gg00','gg04'), ('gg00','gg06'), ('gg00','gg08'), 
+    		    ('gg00','gg11'), ('gg00','gg18'), ('gg00','gg19'), ('gg00','gg20')]
 
-    pairings_1G = []
-    for i in gesture_codes[1:]:
-        single_gesture = ('gg00', i)
-        pairings_1G.append(single_gesture)
-
-    all_pairings = pairings_2G + pairings_1G
+    all_pairings = pairings_2G + pairings_1G # for more information on the pairings refer to AllStimuliFiles.xlsx
 
     # create all combinations for the 1G and 2G pairings
     combinations_HH = create_gesture_combinations(all_pairings, files, 'HH')
     combinations_HR = create_gesture_combinations(all_pairings, files, 'HR')
     all_combinations = combinations_HH + combinations_HR
     all_combs_flat = {item for sublist in all_combinations for item in sublist}
-
+    
     duration = 3
 
     for gestures in tqdm(all_combs_flat):

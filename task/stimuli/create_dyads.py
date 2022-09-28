@@ -122,8 +122,7 @@ def main():
     PAIRINGS_2G = [('gg01', 'gg18'), ('gg04', 'gg11'), ('gg06', 'gg19'), ('gg08', 'gg20')] # get all 2G pairings
     PAIRINGS_1G = [('gg00','gg01'), ('gg00','gg04'), ('gg00','gg06'), ('gg00','gg08'), # get all 1G pairings
                    ('gg00','gg11'), ('gg00','gg18'), ('gg00','gg19'), ('gg00','gg20')]
-    #ALL_PAIRINGS = PAIRINGS_2G + PAIRINGS_1G # get all pairings (for more information on the pairings refer to AllStimuliFiles.xlsx)
-    ALL_PAIRINGS = [('gg04','gg11')]#,('gg00', 'gg04')]
+    ALL_PAIRINGS = PAIRINGS_2G + PAIRINGS_1G # get all pairings (for more information on the pairings refer to AllStimuliFiles.xlsx)
 
     # VARIABLES RELATED TO DYAD FILES
     DURATION = 3 # length of the dyad files

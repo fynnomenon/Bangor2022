@@ -1,0 +1,34 @@
+brotlipy==0.7.0
+certifi @ file:///opt/conda/conda-bld/certifi_1663615672595/work/certifi
+cffi @ file:///opt/conda/conda-bld/cffi_1642701102775/work
+charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
+colorama @ file:///tmp/build/80754af9/colorama_1607707115595/work
+conda==4.14.0
+conda-package-handling @ file:///tmp/build/80754af9/conda-package-handling_1649105784853/work
+cryptography @ file:///tmp/build/80754af9/cryptography_1639414572950/work
+cytoolz==0.11.0
+decorator==4.4.2
+et-xmlfile==1.1.0
+idna @ file:///tmp/build/80754af9/idna_1637925883363/work
+imageio==2.22.0
+imageio-ffmpeg==0.4.7
+jupyterlab-widgets @ file:///home/conda/feedstock_root/build_artifacts/jupyterlab_widgets_1631590465624/work
+moviepy==1.0.3
+numpy==1.22.4
+opencv-python==4.6.0.66
+openpyxl==3.0.10
+pandas==1.5.0
+Pillow==9.2.0
+proglog==0.1.10
+pycosat==0.6.3
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pyOpenSSL @ file:///opt/conda/conda-bld/pyopenssl_1643788558760/work
+PySocks @ file:///tmp/build/80754af9/pysocks_1605305812635/work
+python-dateutil==2.8.2
+pytz==2022.2.1
+requests @ file:///opt/conda/conda-bld/requests_1641824580448/work
+ruamel-yaml-conda @ file:///tmp/build/80754af9/ruamel_yaml_1616016711199/work
+six==1.16.0
+toolz @ file:///tmp/build/80754af9/toolz_1636545406491/work
+tqdm==4.64.1
+urllib3 @ file:///opt/conda/conda-bld/urllib3_1643638302206/work

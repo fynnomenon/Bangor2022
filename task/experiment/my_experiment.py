@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.3),
-    on October 14, 2022, at 15:50
+    on October 24, 2022, at 14:50
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -33,6 +33,7 @@ import psychopy.iohub as io
 from psychopy.hardware import keyboard
 
 # Run 'Before Experiment' code from code
+# start an individual clock
 globalClock = core.Clock()
 
 
@@ -77,7 +78,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 win = visual.Window(
     size=[1920, 1080], fullscr=True, screen=0, 
     winType='pyglet', allowStencil=False,
-    monitor='Monitor', color=[1.0000, -1.0000, -1.0000], colorSpace='rgb',
+    monitor='Monitor', color=[-0.1765, -0.1765, -0.1765], colorSpace='rgb',
     blendMode='avg', useFBO=True, 
     units='norm')
 win.mouseVisible = False
@@ -106,14 +107,20 @@ defaultKeyboard = keyboard.Keyboard(backend='iohub')
 # Run 'Begin Experiment' code from code
 import pandas as pd
 
+# read in the run orders for all different sessions
 ordering_file = pd.read_excel('ExperimentOrder.xlsx')
+# get the order for the specified session (1-48)
 run_files = ordering_file.iloc[int(expInfo['session'])-1].to_list()
+# get the run file for the specified run (1-6)
 run_file = run_files[int(expInfo['run'])-1]
 
+# save the file paths of the videos that are displayed in this run in a list
 file_paths = []
+# get the file paths from the excel sheet and drop the rows with a NULL vent
 paths = pd.read_excel(run_file, usecols='E').dropna().values.tolist()
 for path in paths:
     file_paths.append(path)
+# flatten the list and only keep unique elements
 file_paths = {path for sublist in file_paths for path in sublist}
 waiting_txt = visual.TextStim(win=win, name='waiting_txt',
     text='Preloading done! Waiting for trigger...',
@@ -160,13 +167,23 @@ routineForceEnded = False
 # Run 'Begin Routine' code from code
 import pandas as pd
 
+# start preloading the videos
 preloading = True
 
 stimuli = {}
 for path in file_paths:
+    # load the video (in a smaller size to make the prelaoding a bit faster) from 
+    # the path specified before as a MovieStim3 object and append it to a stimuli 
+    # directory with the file path as the key. 
     stimuli[path] = visual.MovieStim3(win=win,filename=path, name=path[:-4], size=(1760,990))
 
 preloading = False
+
+# Note: After extensive testing, I have come to the conclusion that the 
+# MovieStims are considered static elements now and are therefore loaded before 
+# the experiment starts, no matter where you place the preloading code. 
+# Therefore, it is also not possible to display a corresponding text during the 
+# preloading. 
 trigger.keys = []
 trigger.rt = []
 _trigger_allKeys = []
@@ -263,6 +280,7 @@ continueRoutine = True
 routineForceEnded = False
 # update component parameters for each repeat
 # Run 'Begin Routine' code from code_2
+# declare all variables that are used afterwards and set them to their default value
 play = ''
 key_pressed = 0
 conditions = ['Start']
@@ -332,6 +350,7 @@ for thisComponent in fixation_beginningComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
 # Run 'End Routine' code from code_2
+# save the time at which the trials start
 start_trials = globalClock.getTime()
 
 
@@ -365,13 +384,19 @@ for thisTrial in trials:
     routineForceEnded = False
     # update component parameters for each repeat
     # Run 'Begin Routine' code from code_3
-    conditions.append(EventName)
+    # save the time at which the current trial started
     start_trial = globalClock.getTime()
+    # append the name of the current event to the conditions list
+    conditions.append(EventName)
+    
     
     if conditions[-1] == 'NULL':
         play = 'NULL'
     else:
+        # if the current condition is a catch trial or a stimuli get its MovieStim3
+        # object from the stimuli dictionary. Use FilePath as a key.
         stim = stimuli[FilePath]
+        # set the MovieStim3 object to PLAYING
         stim.play()
     key_resp.keys = []
     key_resp.rt = []
@@ -401,15 +426,17 @@ for thisTrial in trials:
         # Run 'Each Frame' code from code_3
         import numpy as np
         
-        if conditions[-1] != 'NULL':
-            #stim.draw()
-            if key_resp.keys in ('r','b', 'g', 'y'):
+        if conditions[-1] != 'NULL': # if the current condition is a catch trial or a stimuli
+            if key_resp.keys in ('r','b', 'g', 'y'): # save if there was a button press
                 key_pressed = 1
+            # if the trial is longer than the video duration (due to frame dropping), pause
+            # the video and display the last frame until the routine ends
             if np.ceil(t) == stim.duration:
                 stim.pause()
+            # draw the video frame
             stim.draw()
-            #if stim.status == FINISHED: 
-            #    continueRoutine = Fals
+        # if the length of the routine is longer than or equal to the planned duration, 
+        # stop the routine (use Duration -0.01 to account for minor timing issues)
         if t >= Duration - 0.01: 
             continueRoutine = False
         
@@ -470,6 +497,7 @@ for thisTrial in trials:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
     # Run 'End Routine' code from code_3
+    # save the key responses and their properties to the data file
     if key_pressed == 1 and 'Catch' in conditions[-2:]:
         thisExp.addData('key_resp', 'got catch')
     elif key_pressed == 0 and 'Catch' in conditions[-2:]:
@@ -479,6 +507,7 @@ for thisTrial in trials:
     else:
         thisExp.addData('key_resp', 'no press')
     
+    # save the on and offset times of the trials to the data file
     thisExp.addData('AbsoluteOnsetTime', start_trial)
     thisExp.addData('RelativeOnsetTime', start_trial - start_trials)
     end_trial = globalClock.getTime()
@@ -486,6 +515,7 @@ for thisTrial in trials:
     thisExp.addData('RelativeOffsetTime', end_trial - start_trials)
     thisExp.addData('ActualDuration', end_trial - start_trial)
     
+    # set the variables to their default value for the next trial
     play = ''
     key_pressed = 0
     # check responses

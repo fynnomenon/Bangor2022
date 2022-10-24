@@ -27,7 +27,7 @@
     <Param val="latest" valType="str" updates="None" name="Use version"/>
     <Param val="[1920, 1080]" valType="list" updates="None" name="Window size (pixels)"/>
     <Param val="avg" valType="str" updates="None" name="blendMode"/>
-    <Param val="1.0000, -1.0000, -1.0000" valType="color" updates="None" name="color"/>
+    <Param val="-0.1765, -0.1765, -0.1765" valType="color" updates="None" name="color"/>
     <Param val="rgb" valType="str" updates="None" name="colorSpace"/>
     <Param val="100.1.1.1" valType="str" updates="None" name="elAddress"/>
     <Param val="FILTER_LEVEL_2" valType="str" updates="None" name="elDataFiltering"/>
@@ -70,14 +70,14 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="/* Syntax Error: Fix Python code */" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="play = ''&amp;#10;key_pressed = 0&amp;#10;conditions = ['Start']" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="# declare all variables that are used afterwards and set them to their default value&amp;#10;play = ''&amp;#10;key_pressed = 0&amp;#10;conditions = ['Start']" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Routine"/>
-        <Param val="start_trials = globalClock.getTime()&amp;#10;&amp;#10;" valType="extendedCode" updates="constant" name="End Routine"/>
+        <Param val="# save the time at which the trials start&amp;#10;start_trials = globalClock.getTime()&amp;#10;&amp;#10;" valType="extendedCode" updates="constant" name="End Routine"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="code_2" valType="code" updates="None" name="name"/>
       </CodeComponent>
@@ -140,12 +140,12 @@
     </Routine>
     <Routine name="waiting">
       <CodeComponent name="code">
-        <Param val="globalClock = core.Clock()" valType="extendedCode" updates="constant" name="Before Experiment"/>
+        <Param val="# start an individual clock&amp;#10;globalClock = core.Clock()" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
-        <Param val="import pandas as pd&amp;#10;&amp;#10;ordering_file = pd.read_excel('ExperimentOrder.xlsx')&amp;#10;run_files = ordering_file.iloc[int(expInfo['session'])-1].to_list()&amp;#10;run_file = run_files[int(expInfo['run'])-1]&amp;#10;&amp;#10;file_paths = []&amp;#10;paths = pd.read_excel(run_file, usecols='E').dropna().values.tolist()&amp;#10;for path in paths:&amp;#10;    file_paths.append(path)&amp;#10;file_paths = {path for sublist in file_paths for path in sublist}" valType="extendedCode" updates="constant" name="Begin Experiment"/>
+        <Param val="import pandas as pd&amp;#10;&amp;#10;# read in the run orders for all different sessions&amp;#10;ordering_file = pd.read_excel('ExperimentOrder.xlsx')&amp;#10;# get the order for the specified session (1-48)&amp;#10;run_files = ordering_file.iloc[int(expInfo['session'])-1].to_list()&amp;#10;# get the run file for the specified run (1-6)&amp;#10;run_file = run_files[int(expInfo['run'])-1]&amp;#10;&amp;#10;# save the file paths of the videos that are displayed in this run in a list&amp;#10;file_paths = []&amp;#10;# get the file paths from the excel sheet and drop the rows with a NULL vent&amp;#10;paths = pd.read_excel(run_file, usecols='E').dropna().values.tolist()&amp;#10;for path in paths:&amp;#10;    file_paths.append(path)&amp;#10;# flatten the list and only keep unique elements&amp;#10;file_paths = {path for sublist in file_paths for path in sublist}" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="import pandas as pd&amp;#10;&amp;#10;preloading = True&amp;#10;&amp;#10;stimuli = {}&amp;#10;for path in file_paths:&amp;#10;    stimuli[path] = visual.MovieStim3(win=win,filename=path, name=path[:-4], size=(1760,990))&amp;#10;&amp;#10;preloading = False" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="import pandas as pd&amp;#10;&amp;#10;# start preloading the videos&amp;#10;preloading = True&amp;#10;&amp;#10;stimuli = {}&amp;#10;for path in file_paths:&amp;#10;    # load the video (in a smaller size to make the prelaoding a bit faster) from &amp;#10;    # the path specified before as a MovieStim3 object and append it to a stimuli &amp;#10;    # directory with the file path as the key. &amp;#10;    stimuli[path] = visual.MovieStim3(win=win,filename=path, name=path[:-4], size=(1760,990))&amp;#10;&amp;#10;preloading = False&amp;#10;&amp;#10;# Note: After extensive testing, I have come to the conclusion that the &amp;#10;# MovieStims are considered static elements now and are therefore loaded before &amp;#10;# the experiment starts, no matter where you place the preloading code. &amp;#10;# Therefore, it is also not possible to display a corresponding text during the &amp;#10;# preloading. " valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
@@ -207,14 +207,14 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="conditions.append(EventName)&amp;#10;start_trial = globalClock.getTime()&amp;#10;&amp;#10;if conditions[-1] == 'NULL':&amp;#10;    play = 'NULL'&amp;#10;else:&amp;#10;    stim = stimuli[FilePath]&amp;#10;    stim.play()" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="# save the time at which the current trial started&amp;#10;start_trial = globalClock.getTime()&amp;#10;# append the name of the current event to the conditions list&amp;#10;conditions.append(EventName)&amp;#10;&amp;#10;&amp;#10;if conditions[-1] == 'NULL':&amp;#10;    play = 'NULL'&amp;#10;else:&amp;#10;    # if the current condition is a catch trial or a stimuli get its MovieStim3&amp;#10;    # object from the stimuli dictionary. Use FilePath as a key.&amp;#10;    stim = stimuli[FilePath]&amp;#10;    # set the MovieStim3 object to PLAYING&amp;#10;    stim.play()" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
-        <Param val="import numpy as np&amp;#10;&amp;#10;if conditions[-1] != 'NULL':&amp;#10;    #stim.draw()&amp;#10;    if key_resp.keys in ('r','b', 'g', 'y'):&amp;#10;        key_pressed = 1&amp;#10;    if np.ceil(t) == stim.duration:&amp;#10;        stim.pause()&amp;#10;    stim.draw()&amp;#10;    #if stim.status == FINISHED: &amp;#10;    #    continueRoutine = Fals&amp;#10;if t &gt;= Duration - 0.01: &amp;#10;    continueRoutine = False" valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="import numpy as np&amp;#10;&amp;#10;if conditions[-1] != 'NULL': # if the current condition is a catch trial or a stimuli&amp;#10;    if key_resp.keys in ('r','b', 'g', 'y'): # save if there was a button press&amp;#10;        key_pressed = 1&amp;#10;    # if the trial is longer than the video duration (due to frame dropping), pause&amp;#10;    # the video and display the last frame until the routine ends&amp;#10;    if np.ceil(t) == stim.duration:&amp;#10;        stim.pause()&amp;#10;    # draw the video frame&amp;#10;    stim.draw()&amp;#10;# if the length of the routine is longer than or equal to the planned duration, &amp;#10;# stop the routine (use Duration -0.01 to account for minor timing issues)&amp;#10;if t &gt;= Duration - 0.01: &amp;#10;    continueRoutine = False" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Routine"/>
-        <Param val="if key_pressed == 1 and 'Catch' in conditions[-2:]:&amp;#10;    thisExp.addData('key_resp', 'got catch')&amp;#10;elif key_pressed == 0 and 'Catch' in conditions[-2:]:&amp;#10;    thisExp.addData('key_resp', 'missed catch')&amp;#10;elif key_pressed == 1:&amp;#10;    thisExp.addData('key_resp', 'false press')&amp;#10;else:&amp;#10;    thisExp.addData('key_resp', 'no press')&amp;#10;&amp;#10;thisExp.addData('AbsoluteOnsetTime', start_trial)&amp;#10;thisExp.addData('RelativeOnsetTime', start_trial - start_trials)&amp;#10;end_trial = globalClock.getTime()&amp;#10;thisExp.addData('AbsoluteOffsetTime', end_trial)&amp;#10;thisExp.addData('RelativeOffsetTime', end_trial - start_trials)&amp;#10;thisExp.addData('ActualDuration', end_trial - start_trial)&amp;#10;&amp;#10;play = ''&amp;#10;key_pressed = 0" valType="extendedCode" updates="constant" name="End Routine"/>
+        <Param val="# save the key responses and their properties to the data file&amp;#10;if key_pressed == 1 and 'Catch' in conditions[-2:]:&amp;#10;    thisExp.addData('key_resp', 'got catch')&amp;#10;elif key_pressed == 0 and 'Catch' in conditions[-2:]:&amp;#10;    thisExp.addData('key_resp', 'missed catch')&amp;#10;elif key_pressed == 1:&amp;#10;    thisExp.addData('key_resp', 'false press')&amp;#10;else:&amp;#10;    thisExp.addData('key_resp', 'no press')&amp;#10;&amp;#10;# save the on and offset times of the trials to the data file&amp;#10;thisExp.addData('AbsoluteOnsetTime', start_trial)&amp;#10;thisExp.addData('RelativeOnsetTime', start_trial - start_trials)&amp;#10;end_trial = globalClock.getTime()&amp;#10;thisExp.addData('AbsoluteOffsetTime', end_trial)&amp;#10;thisExp.addData('RelativeOffsetTime', end_trial - start_trials)&amp;#10;thisExp.addData('ActualDuration', end_trial - start_trial)&amp;#10;&amp;#10;# set the variables to their default value for the next trial&amp;#10;play = ''&amp;#10;key_pressed = 0" valType="extendedCode" updates="constant" name="End Routine"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="code_3" valType="code" updates="None" name="name"/>
       </CodeComponent>

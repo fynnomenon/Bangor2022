@@ -28,7 +28,7 @@ const psychoJS = new PsychoJS({
 // open window:
 psychoJS.openWindow({
   fullscr: true,
-  color: new util.Color([1.0, (- 1.0), (- 1.0)]),
+  color: new util.Color([(- 0.1765), (- 0.1765), (- 0.1765)]),
   units: 'norm',
   waitBlanking: true
 });

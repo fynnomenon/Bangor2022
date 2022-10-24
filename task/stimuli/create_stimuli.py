@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 from os import system
 
 system('python3 prepare_singles.py')
